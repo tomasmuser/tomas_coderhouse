@@ -101,7 +101,7 @@ def apic(start_date, end_date):
 def intert_data(start_date, end_date, table_name):
     fin = end_date
     while fin >= start_date:
-        df = apic
+        df = apic(start_date, end_date,)
         add_row(table_name, df)
         start_date = start_date + timedelta(1)
         time.sleep(10)
