@@ -1,5 +1,6 @@
 # Private Keys
 keys.py
+secrets/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
