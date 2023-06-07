@@ -1,0 +1,51 @@
+version: '3'
+services:
+  airflow-webserver:
+    image: apache/airflow:2.1.0
+    command: webserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    env_file:
+      - .env
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${REDSHIFT_USERNAME}:${REDSHIFT_PASSWORD}@${REDSHIFT_HOST}:${REDSHIFT_PORT}/${REDSHIFT_DATABASE}
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+
+  airflow-scheduler:
+    image: apache/airflow:2.1.0
+    command: scheduler
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    env_file:
+      - .env
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${REDSHIFT_USERNAME}:${REDSHIFT_PASSWORD}@${REDSHIFT_HOST}:${REDSHIFT_PORT}/${REDSHIFT_DATABASE}
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+
+  airflow-init:
+    image: apache/airflow:2.1.0
+    command: version
+    env_file:
+      - .env
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${REDSHIFT_USERNAME}:${REDSHIFT_PASSWORD}@${REDSHIFT_HOST}:${REDSHIFT_PORT}/${REDSHIFT_DATABASE}
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    depends_on:
+      - redshift
+
+  redshift:
+    image: amazon/redshift-utils
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_REGION}
+    command: ["/bin/bash", "-c", "sleep infinity"]
