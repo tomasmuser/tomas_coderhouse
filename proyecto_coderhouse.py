@@ -117,7 +117,7 @@ def apic(start_date, end_date):
         #df.replace(to_replace=['\[', '\]'], value='', regex=True, inplace=True)
         #df = df.replace('\[|\]', '', regex=True)
         for _ in columnas:
-            df[_] = df[_].astype(str).apply(lambda x: re.sub(r'\[|\]', '', x))
+            df[_] = df[_].astype(str).apply(lambda x: re.sub(r'\[|\]', '', x)) # Borra [ y ] de todas las filas por columna.
         #mostrar_fila_como_tabla(df, 0)
         df = df.astype(dic_types)
         #print("Dataframe normalized.")
